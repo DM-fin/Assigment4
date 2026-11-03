@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### test get all or get by ID
-get http://localhost:3000/todos/
+get http://localhost:3000/todos/c11b6e71-3e97-4db8-ba4e-a372631ef01b
 
 ### test get with query parameter
 GET http://localhost:3000/todos?state=doing
@@ -21,12 +21,12 @@ DELETE http://localhost:3000/todos/76bbb9e9-1b39-45f9-9c50-f9bfabc915cc
 Accept: application/json
 
 ### test update 
-put http://localhost:3000/todos/76bbb9e9-1b39-45f9-9c50-f9bfabc915cc
+put http://localhost:3000/todos/c11b6e71-3e97-4db8-ba4e-a372631ef01b
 Content-Type: application/json
 Accept: application/json
 
 {
-    //"title": "undoo API assignment",
+    //"title": "Redoo API assignment",
     "description": "Completed 9 days before deadline",
     "state": "doing",
     "dueDate": "2026"
