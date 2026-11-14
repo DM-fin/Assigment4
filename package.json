@@ -1,11 +1,14 @@
 {
   "name": "assignment4",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test",
+    "test:unit": "node --test tests/unit.test.js",
+    "test:api": "node --test tests/api.test.js",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +17,11 @@
   "dependencies": {
     "express": "^5.3.0",
     "uuid": "^14.0.3"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.2"
   }
 }

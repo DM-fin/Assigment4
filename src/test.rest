@@ -4,29 +4,28 @@ Content-Type: application/json
 
 {
     "title": "submit API assignment",
-    "description": "Create own API",
+    //"description": "Create own API",
     "state": "doing",
     "dueDate": "12.11.2026"
 }
 
 ### test get all or get by ID
-get http://localhost:3000/todos/c11b6e71-3e97-4db8-ba4e-a372631ef01b
-
+get http://localhost:3000/todos/
 ### test get with query parameter
 GET http://localhost:3000/todos?state=doing
 
 ### test delete all and delete by id
 
-DELETE http://localhost:3000/todos/76bbb9e9-1b39-45f9-9c50-f9bfabc915cc
+DELETE http://localhost:3000/todos/
 Accept: application/json
 
 ### test update 
-put http://localhost:3000/todos/c11b6e71-3e97-4db8-ba4e-a372631ef01b
+put http://localhost:3000/todos/6122a324-3661-4eb0-a115-239718fd0173
 Content-Type: application/json
 Accept: application/json
 
 {
-    //"title": "Redoo API assignment",
+    "title": "Redoo API assignment",
     "description": "Completed 9 days before deadline",
     "state": "doing",
     "dueDate": "2026"
