@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import {
     getAllTodo, 
     getTodoByState, 
+    getTodoByStateCSV, 
     postTodo, 
     delByID, 
     delAll,
@@ -41,10 +42,12 @@ router.delete('/:id', (req, res) => {
 
 router.get('/', (req, res) => {
     const qState = req.query.state
+
     //console.log(qState)
     if (qState !== undefined) {
         try {
-            res.status(200).json(getTodoByState(qState))
+            if (req.accepts('json')) res.status(200).json(getTodoByState(qState))
+                else res.type('text/csv').status(200).send(getTodoByStateCSV(qState))
         } catch (error){
             return res.status(error.status).
                 send(error.message)

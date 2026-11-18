@@ -1,6 +1,6 @@
 {
   "name": "assignment4",
-  "version": "1.1.0",
+  "version": "1.6.0",
   "description": "",
   "main": "src/server.js",
   "scripts": {
@@ -16,7 +16,9 @@
   "type": "module",
   "dependencies": {
     "express": "^5.3.0",
-    "uuid": "^14.0.3"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^14.0.3",
+    "yamljs": "^0.3.0"
   },
   "directories": {
     "test": "tests"

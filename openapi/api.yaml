@@ -1,0 +1,182 @@
+openapi: 3.2.1
+info:
+  title: Todo REST API
+  version: 0.0.1
+  description: An API for manging todo tickets Support CRUP operations an filtering by state
+
+servers:
+  - url: http://localhost:3000
+    description: My local dev server
+
+tags: 
+  - name: Authentication
+    description: Identification, authentication and authorization operations
+  - name: Todos
+    description: CRUD operations on Todo items
+
+paths:
+  /todos:
+    get:
+      tags: [Todos]
+      produces: ["application/json", 'text/csv']
+      summary: Get all todos, or filter by state
+      parameters:
+        - name: state
+          description: Filter todos by their current state
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TodoState'
+      responses: 
+        '200':
+          description: List of Todo items
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/TodoItem'
+            text/csv:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+        tags: 
+          - Todos
+        summary: Create a new todo item
+        requestBody:
+          required: true
+          description: Data for the new Todo item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewTodoItem'
+        responses:
+          '201':
+            description: Todo item successfully created
+            content:
+              application/json:
+                schema:
+                 $ref: '#/components/schemas/TodoItem'
+          '400':
+            $ref: '#/components/responses/BadRequest'
+    put:
+      tags: [Todos]
+      summary: Update Todo item
+      requestBody:
+        required: true
+        description: Data for the Todo Update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTodoItem'
+      responses:
+        '200':
+          description: Todo item successfully uptated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoItem'
+        '400':
+          $ref: '#/components/responses/BadRequest'  
+  
+  /todos/{id}:
+      get:
+        tags:
+          - Todos
+        summary: Get a specific todo by ID
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: Unique identifier of the Todo item
+            schema:
+              type: string
+              example: "1234"
+        responses:
+          '200':
+            description: A single Todo item
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/TodoItem'
+          '404':
+            description: Todo item not found
+      delete:
+        tags: [Todos]
+        summary: Delete a specific todo by ID
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: Unique identifier of the Todo item
+            schema:
+              type: string
+              example: '1234'
+        responses:
+          '200':
+            description: A single Todo item
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/TodoItem'
+          '404':
+            description: Todo item not found 
+          
+components: 
+  schemas:
+    TodoState:
+      type: string
+      description: Current state of the Todo items
+      enum:
+        - todo
+        - doing
+        - done
+    NewTodoItem:
+      type: object
+      required:
+        - title
+        - state
+      properties:
+        title: 
+          type: string
+          minLength: 1
+          example: Title of the Task
+        state:
+          $ref: '#/components/schemas/TodoState'
+    TodoItem:
+      type: object
+      required: 
+        - id
+        - title
+        - description
+        - state
+        - dueDate
+        - createdAt
+        - modifiedAt
+      properties: 
+        id:
+          type: string
+          readOnly: true
+          example: "1234"
+        title: 
+          type: string
+          minLength: 1
+          example: Title of the Task
+        description:
+          type: string
+          example: "description of the Task"
+        state: 
+          $ref: '#/components/schemas/TodoState'
+        dueDate:
+          type: string
+        createdAt:
+          type: string
+        modifiedAt:
+          type: string
+  responses: 
+      BadRequest:
+        description: Invalid input
+        type: string
+        example: invalid input

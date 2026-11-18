@@ -1,5 +1,7 @@
+@apiserver = http://localhost:3000/
+
 ### test todo creation (title&state required)
-post http://localhost:3000/todos
+post {{apiserver}}todos
 Content-Type: application/json
 
 {
@@ -10,17 +12,17 @@ Content-Type: application/json
 }
 
 ### test get all or get by ID
-get http://localhost:3000/todos/
+get {{apiserver}}todos/
 ### test get with query parameter
-GET http://localhost:3000/todos?state=doing
+GET {{apiserver}}todos?state=doing
 
 ### test delete all and delete by id
 
-DELETE http://localhost:3000/todos/
+DELETE {{apiserver}}todos/
 Accept: application/json
 
 ### test update 
-put http://localhost:3000/todos/6122a324-3661-4eb0-a115-239718fd0173
+put {{apiserver}}todos/6122a324-3661-4eb0-a115-239718fd0173
 Content-Type: application/json
 Accept: application/json
 
@@ -30,3 +32,8 @@ Accept: application/json
     "state": "doing",
     "dueDate": "2026"
 }
+
+### Test GET /todos with text/csv format in output
+
+GET {{apiserver}}todos?state=doing
+Accept: text/csv

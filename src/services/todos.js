@@ -72,6 +72,21 @@ export function getTodoByState(qState) {
     }
     else return filterTodos
 }
+export function getTodoByStateCSV(qState) {
+    if (!todoStates.includes(qState)) {
+        const err = new Error("Invalid state-parameter in URL. Should be \"todo\", \"doing\" or \"done\"")  // "Invalid state-parameter in URL. Should be 'todo', 'doing' or 'done'"
+        err.status = 400
+        throw(err)
+    }
+    const filterTodos = todos.filter(item => item.state === qState)
+    
+    if (filterTodos.length == 0) {
+        const err = new Error(`Record with the \"${qState}\" state not found`)  // Record with that state not found
+        err.status = 404
+        throw(err)
+    }
+    else return jsonToCsv(filterTodos)
+}
 
 
 export function getTodoById (reqID) {
@@ -99,4 +114,27 @@ export function putTodo(reqID, putTodoBody) {
     }
     Object.assign(todos[putTodoIdx], putTodoBody)
     return todos[putTodoIdx]
+}
+
+
+function jsonToCsv(items) {
+  if (!items || !items.length) {
+    return '';
+  }
+
+  // Extract column headers from the first object
+  const headers = Object.keys(items[0]);
+  const csvRows = [headers.join(',')];
+
+  for (const row of items) {
+    const values = headers.map(header => {
+      const val = row[header] ?? '';
+      // Escape quotes and wrap in quotes if the value contains commas, quotes, or newlines
+      const escaped = String(val).replace(/"/g, '""');
+      return /[",\n]/.test(escaped) ? `"${escaped}"` : escaped;
+    });
+    csvRows.push(values.join(','));
+  }
+
+  return csvRows.join('\n');
 }
