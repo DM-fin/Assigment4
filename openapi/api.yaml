@@ -4,6 +4,9 @@ info:
   version: 0.0.1
   description: An API for manging todo tickets Support CRUP operations an filtering by state
 
+security:
+  - bearerAuth: []
+
 servers:
   - url: http://localhost:3000
     description: My local dev server
@@ -15,10 +18,56 @@ tags:
     description: CRUD operations on Todo items
 
 paths:
+  /auth:
+    post:
+      tags: [Authentication]
+      security: []
+      summary: Allows to create/refresh access token and logout
+      requestBody:
+        required: true
+        description: Username/password to login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginItem'
+      responses:
+        '400':
+          description: 'error: Username and password are required'
+        '401':
+          description: 'error: Invalid credentials'
+        '200':
+          description: return after successfull token creation
+          $ref: '#/components/responses/TokenReturn'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      security:
+      - cookieAuth: []
+      summary: Update access token
+      responses:
+        '401':
+          description: 'error: Invalid or expired refresh token or error: Refresh token is missing'
+        '200':
+          $ref: '#/components/responses/TokenReturn'
+  /auth/logout:
+    post:
+      security:
+      - cookieAuth: []
+      tags: [Authentication]
+      summary: Logout from the system
+      responses:
+        '400':
+          description: 'message: You are already logged out'
+        '200':
+          description: 'message: Logged out successfully'
+
   /todos:
     get:
       tags: [Todos]
-      produces: ["application/json", 'text/csv']
+      security:
+      - bearerAuth: []
       summary: Get all todos, or filter by state
       parameters:
         - name: state
@@ -126,6 +175,20 @@ paths:
           
 components: 
   schemas:
+    LoginItem:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username: 
+          type: string
+          minLength: 1
+          example: user
+        password:
+          type: string
+          minLength: 4
+          example: pass
     TodoState:
       type: string
       description: Current state of the Todo items
@@ -175,8 +238,74 @@ components:
           type: string
         modifiedAt:
           type: string
+    TokenPayload:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          description: Access token lifetime in seconds
+          example: 600
   responses: 
       BadRequest:
         description: Invalid input
-        type: string
-        example: invalid input
+        content:
+          application/json:
+            schema:
+              type: string
+              example: invalid input
+      TokenReturn:
+        description: Access token issued and refresh_token cookie set
+        headers:
+          Set-Cookie:
+            description: HttpOnly refresh_token cookie (Path=/auth; SameSite=Strict)
+            schema:
+              type: string
+              example: refresh_token=eyJhbG...; Max-Age=604800; Path=/auth; HttpOnly; SameSite=Strict
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenPayload'
+      TooManyRequests:
+        description: Too many requests — rate limit exceeded
+        headers:
+          Retry-After:
+            description: Seconds to wait before making another request
+            schema:
+              type: integer
+              example: 60
+          RateLimit-Limit:
+            description: Maximum requests allowed in the current window
+            schema:
+              type: integer
+              example: 3
+          RateLimit-Remaining:
+            description: Remaining requests in the current window
+            schema:
+              type: integer
+              example: 0
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Too many requests, please try again later.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Short-lived JWT access token sent in the Authorization header
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+      description: Long-lived JWT refresh token stored in an HttpOnly cookie
+  

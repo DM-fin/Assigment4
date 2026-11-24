@@ -1,8 +1,26 @@
 @apiserver = http://localhost:3000/
 
-### test todo creation (title&state required)
+### test getting access and refresh tokens
+POST  {{apiserver}}auth
+content-type: application/json
+
+{
+  "username": "user",
+  "password": "user"
+}
+
+### test logging-out
+POST  {{apiserver}}auth/logout
+Accept: application/json
+
+### test refreshing accesss token
+POST  {{apiserver}}auth/refresh
+
+
+### test todo creation (title&state required) with authorization
 post {{apiserver}}todos
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzk1NTQzMzA0LCJleHAiOjE3OTU1NDMzNjR9.Zi3sMtLDdYZ6u22VmcOn5mFQQ4XAiqbSkoAcZ9wfw3Y
 
 {
     "title": "submit API assignment",
@@ -13,18 +31,27 @@ Content-Type: application/json
 
 ### test get all or get by ID
 get {{apiserver}}todos/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbSIsImlhdCI6MTc5NTUzNzczNiwiZXhwIjoxNzk1NTM4NjM2fQ.Z4FQE3dgciZy02-8RVIKvlq_4gOxSvt2pAsMKR__5Qk
+
+
 ### test get with query parameter
 GET {{apiserver}}todos?state=doing
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbSIsImlhdCI6MTc5NTUzNzczNiwiZXhwIjoxNzk1NTM4NjM2fQ.Z4FQE3dgciZy02-8RVIKvlq_4gOxSvt2pAsMKR__5Qk
+
 
 ### test delete all and delete by id
 
 DELETE {{apiserver}}todos/
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbSIsImlhdCI6MTc5NTUzNzczNiwiZXhwIjoxNzk1NTM4NjM2fQ.Z4FQE3dgciZy02-8RVIKvlq_4gOxSvt2pAsMKR__5Qk
+
 
 ### test update 
 put {{apiserver}}todos/6122a324-3661-4eb0-a115-239718fd0173
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbSIsImlhdCI6MTc5NTUzNzczNiwiZXhwIjoxNzk1NTM4NjM2fQ.Z4FQE3dgciZy02-8RVIKvlq_4gOxSvt2pAsMKR__5Qk
+
 
 {
     "title": "Redoo API assignment",
@@ -37,3 +64,4 @@ Accept: application/json
 
 GET {{apiserver}}todos?state=doing
 Accept: text/csv
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbSIsImlhdCI6MTc5NTUzNzczNiwiZXhwIjoxNzk1NTM4NjM2fQ.Z4FQE3dgciZy02-8RVIKvlq_4gOxSvt2pAsMKR__5Qk
